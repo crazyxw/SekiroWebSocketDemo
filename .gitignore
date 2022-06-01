@@ -1,0 +1,43 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+# kdiff3 ignore
+*.orig
+
+# maven ignore
+target/
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+
+# idea ignore
+.idea/
+*.ipr
+*.iws
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system ignore
+Thumbs.db
+
+
+*.apk
+build/
+apps/
+
+
+logs/
+
+sekiro-server/build.gradle
