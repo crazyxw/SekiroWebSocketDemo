@@ -12,8 +12,7 @@ import java.net.URISyntaxException;
 public class QuickStart {
 
     public static void main(String[] args) throws URISyntaxException {
-        SekiroWebSocketClient webSocketClient = new SekiroWebSocketClient(new URI("ws://127.0.0.1:5612/business-demo/register?group=aaa&clientId=qqqq"));
-        webSocketClient.connect();
+        SekiroWebSocketClient webSocketClient = new SekiroWebSocketClient(new URI("ws://127.0.0.1:5612/business-demo/register?group=aaa&clientId=java01"));
         webSocketClient.registerSekiroHandler("hello", new RequestHandler() {
             public void handleRequest(SekiroRequest sekiroRequest, SekiroResponse sekiroResponse) {
                 JSONObject jsonObject = sekiroRequest.getRequestJSONObject();

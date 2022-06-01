@@ -55,6 +55,8 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
         }
         this.clientId = clientId;
         this.group = group;
+
+        this.connect();
     }
 
 
