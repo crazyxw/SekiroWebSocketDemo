@@ -67,6 +67,7 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
 
     @Override
     public void onMessage(String s) {
+        System.out.println("sekiro message:" + s);
         JSONObject jsonObject = JSONObject.parseObject(s);
         String action = jsonObject.getString("action");
         RequestHandler requestHandler = this.handlerMap.get(action);
