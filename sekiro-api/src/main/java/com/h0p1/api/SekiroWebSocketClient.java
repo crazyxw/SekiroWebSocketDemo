@@ -23,6 +23,8 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
     private String group;
     private String clientId;
 
+    private boolean isRegister = false;
+
     public String getGroup() {
         return group;
     }
@@ -69,6 +71,12 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
     public void onMessage(String s) {
         System.out.println("sekiro message:" + s);
         JSONObject jsonObject = JSONObject.parseObject(s);
+        if (!jsonObject.containsKey("__sekiro_seq__")){
+            if(jsonObject.getInteger("code") == 1){
+                this.isRegister = true;
+            }
+            return;
+        }
         String action = jsonObject.getString("action");
         RequestHandler requestHandler = this.handlerMap.get(action);
         if (requestHandler != null){
@@ -86,6 +94,9 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
     @Override
     public void onClose(int i, String s, boolean b) {
          System.out.println("sekiro已关闭！");
+         if (this.isRegister){
+             return;  // 已经注册过, 就不再尝试重连
+         }
         ReconnectThreadEnum.getInstance().reconnectWs(this);
     }
 
