@@ -17,11 +17,26 @@ public class SekiroResponse extends ClientContext {
     }
 
     public void send(String string) {
-        getSekiroClient().send(string);
+        getSekiroClient().send(sekiroRequest.getReqId()+string);
     }
 
     public void send(JSONObject jsonObject) {
-        jsonObject.put("clientId", getSekiroClient().getClientId());
-        getSekiroClient().send(jsonObject.toJSONString());
+        this.send(jsonObject.toJSONString());
+    }
+
+    public void success(String string){
+        JSONObject res = new JSONObject();
+        res.put("clientId", getSekiroClient().getClientId());
+        res.put("data", string);
+        res.put("status", 0);
+        this.send(res);
+    }
+
+    public void fail(String string){
+        JSONObject res = new JSONObject();
+        res.put("clientId", getSekiroClient().getClientId());
+        res.put("data", string);
+        res.put("status", 1);
+        this.send(res);
     }
 }

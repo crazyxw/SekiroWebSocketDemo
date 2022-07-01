@@ -15,9 +15,7 @@ public class QuickStart {
         SekiroWebSocketClient webSocketClient = new SekiroWebSocketClient(new URI("ws://127.0.0.1:5612/api/register?group=aaa&clientId=java01&vkey=test"));
         webSocketClient.registerSekiroHandler("hello", new RequestHandler() {
             public void handleRequest(SekiroRequest sekiroRequest, SekiroResponse sekiroResponse) {
-                JSONObject jsonObject = sekiroRequest.getRequestJSONObject();
-                jsonObject.put("hello", "i com from java");
-                sekiroResponse.send(jsonObject);
+                sekiroResponse.success("hello java!");
             }
         });
     }

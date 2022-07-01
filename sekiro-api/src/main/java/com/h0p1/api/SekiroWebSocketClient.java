@@ -8,7 +8,6 @@ import com.h0p1.api.utils.StringUtil;
 import com.h0p1.api.utils.TextUtil;
 import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -68,27 +67,20 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
     }
 
     @Override
-    public void onMessage(String s) {
-        System.out.println("sekiro message:" + s);
-        JSONObject jsonObject = JSONObject.parseObject(s);
-        if (!jsonObject.containsKey("__sekiro_seq__")){
-            if(jsonObject.getInteger("code") == 1){
-                this.isRegister = true;
-            }
-            return;
+    public void onMessage(String msg) {
+        System.out.println("sekiro message:" + msg);
+        String msgType = msg.substring(0, 1);
+        String body = msg.substring(1);
+        switch (msgType){
+            case "0":
+                // 系统消息
+                handlerSystemMsg(body);
+                break;
+            case "1":
+                // 用户消息
+                handlerUserMsg(body);
+                break;
         }
-        String action = jsonObject.getString("action");
-        RequestHandler requestHandler = this.handlerMap.get(action);
-        if (requestHandler != null){
-            SekiroRequest sekiroRequest = new SekiroRequest(this, jsonObject);
-            SekiroResponse sekiroResponse = new SekiroResponse(sekiroRequest);
-            requestHandler.handleRequest(sekiroRequest, sekiroResponse);
-        }else{
-            jsonObject.put("clientId", this.getClientId());
-            jsonObject.put("message", "当前设备没有注册此action");
-            this.send(jsonObject.toJSONString());
-        }
-
     }
 
     @Override
@@ -100,6 +92,30 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
         ReconnectThreadEnum.getInstance().reconnectWs(this);
     }
 
+    public void handlerSystemMsg(String msg){
+        JSONObject jsonObject = JSONObject.parseObject(msg);
+        if(jsonObject.getInteger("code") == 1){
+            this.isRegister = true;
+        }
+    }
+
+    public void handlerUserMsg(String msg){
+        String req_id = msg.substring(0, 36);
+        String data = msg.substring(36);
+        JSONObject jsonObject = JSONObject.parseObject(data);
+        String action = jsonObject.getString("action");
+        RequestHandler requestHandler = this.handlerMap.get(action);
+        if (requestHandler != null){
+            SekiroRequest sekiroRequest = new SekiroRequest(this, req_id, jsonObject);
+            SekiroResponse sekiroResponse = new SekiroResponse(sekiroRequest);
+            requestHandler.handleRequest(sekiroRequest, sekiroResponse);
+        }else{
+            jsonObject.put("clientId", this.getClientId());
+            jsonObject.put("message", "当前设备没有注册此action");
+            this.send(jsonObject.toJSONString());
+        }
+    }
+
     @Override
     public void onError(Exception e) {
          System.out.println("sekiro连接出现错误！！"+ e.getMessage());
@@ -108,7 +124,6 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
     public void registerSekiroHandler(String action, RequestHandler requestHandler){
         this.handlerMap.put(action, requestHandler);
     }
-
 
 
     public enum ReconnectThreadEnum {
