@@ -105,14 +105,12 @@ public class SekiroWebSocketClient extends org.java_websocket.client.WebSocketCl
         JSONObject jsonObject = JSONObject.parseObject(data);
         String action = jsonObject.getString("action");
         RequestHandler requestHandler = this.handlerMap.get(action);
+        SekiroRequest sekiroRequest = new SekiroRequest(this, req_id, jsonObject);
+        SekiroResponse sekiroResponse = new SekiroResponse(sekiroRequest);
         if (requestHandler != null){
-            SekiroRequest sekiroRequest = new SekiroRequest(this, req_id, jsonObject);
-            SekiroResponse sekiroResponse = new SekiroResponse(sekiroRequest);
             requestHandler.handleRequest(sekiroRequest, sekiroResponse);
         }else{
-            jsonObject.put("clientId", this.getClientId());
-            jsonObject.put("message", "当前设备没有注册此action");
-            this.send(jsonObject.toJSONString());
+            sekiroResponse.fail("当前设备没有注册此action");
         }
     }
 

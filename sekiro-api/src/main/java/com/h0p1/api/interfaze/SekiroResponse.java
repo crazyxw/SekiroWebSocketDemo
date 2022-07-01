@@ -35,7 +35,7 @@ public class SekiroResponse extends ClientContext {
     public void fail(String string){
         JSONObject res = new JSONObject();
         res.put("clientId", getSekiroClient().getClientId());
-        res.put("data", string);
+        res.put("msg", string);
         res.put("status", 1);
         this.send(res);
     }
