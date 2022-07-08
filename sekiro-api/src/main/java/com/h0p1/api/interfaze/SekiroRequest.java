@@ -30,4 +30,17 @@ public class SekiroRequest extends ClientContext {
         this.requestJSONObject = requestJSONObject;
         this.req_id = req_id;
     }
+
+
+    public String getString(String key){
+        return this.requestJSONObject.getString(key);
+    }
+
+    public int getInt(String key){
+        return this.requestJSONObject.getIntValue(key);
+    }
+
+    public boolean getBoolean(String key){
+        return this.requestJSONObject.getBoolean(key);
+    }
 }
